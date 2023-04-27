@@ -3,12 +3,12 @@ import os
 from dotenv import load_dotenv
 
 def main():
-    print("Type 'exit' to quit.")
+    print("Type 'q' to quit.")
     while True:
         message = input("Input: ")
-        if message == "exit":
+        if message == "q":
             break
-        print(get_response(message)["content"])
+        print(f'Output: {get_response(message)["content"]}')
 
 
 def get_response(message):
