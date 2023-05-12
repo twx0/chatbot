@@ -1,27 +1,26 @@
+import asyncio
 import openai
 import os
+from openai import ChatCompletion
 from dotenv import load_dotenv
 
-def main():
+history = []
+
+async def main():
     print("Type 'q' to quit.")
-    while True:
-        message = input("Input: ")
-        if message == "q":
-            break
-        print(f'Output: {get_response(message)["content"]}')
+    while (message := input("> ")) != "q":
+        print(await get_response(message), end="\n\n")
 
 
-def get_response(message):
+async def get_response(content):
+    history.append({"role": "user", "content": content})
     load_dotenv()
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": message}
-        ]
-    )
-    return completion.choices[0].message
+    resp = await ChatCompletion.acreate(model="gpt-3.5-turbo",messages=history)
+    output = resp["choices"][0]["message"]["content"]
+    history.append({"role": "assistant", "content": output})
+    return output
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
